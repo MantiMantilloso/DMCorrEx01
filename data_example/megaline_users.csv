@@ -1,0 +1,3 @@
+user_id,first_name,last_name,age,city,reg_date,plan,churn_date
+1000,Anamaria,Bauer,45,Atalanta,2018-12-24,ultimate,nan
+1001,Micked,Wilkerson,28,Seattle,2018-08-13,surf,nan
