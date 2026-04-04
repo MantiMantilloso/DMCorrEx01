@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: megaline_postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: megaline_admin
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_DB: megaline_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mage:
+    image: mageai/mageai:latest
+    container_name: megaline_mage
+    depends_on:
+      - postgres
+    environment:
+      USER_CODE_PATH: /home/src/megaline_project
+      POSTGRES_DBNAME: megaline_db
+      POSTGRES_SCHEMA: public
+      POSTGRES_USER: megaline_admin
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./mage_data:/home/src
+    restart: on-failure
+
+  pyspark:
+    image: jupyter/pyspark-notebook:latest
+    container_name: megaline_spark
+    depends_on:
+      - postgres
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - ./spark_notebooks:/home/jovyan/work
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+
+volumes:
+  postgres_data:
+    description: "Volumen persistente para la base de datos de Megaline"
